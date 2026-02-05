@@ -269,6 +269,7 @@ end
 ```
 
 ### Multiple Browsers
+
 One of the key advantages of Playwright is true cross-browser testing. You can easily switch engines:
 
 - **Chromium:** Google Chrome, Microsoft Edge, etc.
@@ -276,16 +277,19 @@ One of the key advantages of Playwright is true cross-browser testing. You can e
 - **WebKit:** Safari, iOS browsers.
 
 To test in Safari (WebKit):
+
 ```ruby
 E2E.configure { |config| config.browser_type = :webkit }
 ```
 
 Don't forget to install all browser binaries:
+
 ```bash
 npx playwright install
 ```
 
 ### Switching Browsers per Test (RSpec)
+
 You can run specific tests in different browsers using metadata (requires simple setup in your helper).
 
 First, update your `spec/e2e_helper.rb` to respect metadata:
@@ -299,7 +303,7 @@ RSpec.configure do |config|
       E2E.reset_session! # Force new browser launch
     end
   end
-  
+
   config.after(:each) do
     if E2E.config.browser_type != :chromium
       E2E.config.browser_type = :chromium

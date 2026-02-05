@@ -12,11 +12,12 @@ module E2E
         browser_type_name = E2E.config.browser_type || :chromium
         @browser_type = @playwright.send(browser_type_name)
 
-        @browser = @browser_type.launch(headless: E2E.config.headless)
+        @headless = E2E.config.headless
+        @browser = @browser_type.launch(headless: @headless)
         @context = @browser.new_context
 
-        # Enable debug console to allow page.pause
-        @context.enable_debug_console!
+        # Enable debug console to allow page.pause (requires GUI, so only in headed mode)
+        @context.enable_debug_console! unless @headless
 
         @page = @context.new_page
       end
@@ -90,6 +91,8 @@ module E2E
       end
 
       def pause
+        raise E2E::Error, "pause is not available in headless mode" if @headless
+
         @page.pause
       end
 
