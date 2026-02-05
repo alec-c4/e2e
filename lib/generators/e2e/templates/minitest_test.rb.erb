@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+require "e2e_helper"
+
+class <%= class_name %>Test < E2E::Minitest::TestCase
+  def test_works
+    visit "/"
+    # assert_includes page.body, "Home"
+  end
+end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "e2e"
+require "e2e/rspec"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

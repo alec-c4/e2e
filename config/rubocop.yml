@@ -1,0 +1,31 @@
+# Configuration for E2E tests
+# This configuration relaxes strict RSpec rules for E2E scenarios.
+
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/e2e/**/*'
+    - 'test/e2e/**/*'
+
+RSpec/DescribeMethod:
+  Exclude:
+    - 'spec/e2e/**/*'
+    - 'test/e2e/**/*'
+
+RSpec/SpecFilePathFormat:
+  Exclude:
+    - 'spec/e2e/**/*'
+    - 'test/e2e/**/*'
+
+# E2E tests often involve multiple steps and checks
+RSpec/ExampleLength:
+  Exclude:
+    - 'spec/e2e/**/*'
+    - 'test/e2e/**/*'
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - 'spec/e2e/**/*'
+    - 'test/e2e/**/*'
+
+RSpec/NestedGroups:
+  Max: 4
