@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 require "e2e"
+begin
+  require "rspec/expectations"
+rescue LoadError
+end
+require_relative "matchers"
 
 RSpec.configure do |config|
   config.include E2E::DSL, type: :e2e

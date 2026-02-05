@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-if defined?(RSpec)
+if defined?(RSpec::Matchers)
   RSpec::Matchers.define :have_class do |expected_class|
     match do |element|
       element.has_class?(expected_class)
