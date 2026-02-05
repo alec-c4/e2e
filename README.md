@@ -236,8 +236,60 @@ Now you can use fast transactional tests (standard RSpec behavior) instead of sl
 
 ```ruby
 E2E.configure do |config|
+  config.driver = :playwright
+  config.browser_type = :chromium # Options: :chromium (default), :firefox, :webkit
   config.headless = ENV.fetch("HEADLESS", "true") == "true"
   config.app = Rails.application # Automatic Rack booting
+end
+```
+
+### Multiple Browsers
+One of the key advantages of Playwright is true cross-browser testing. You can easily switch engines:
+
+- **Chromium:** Google Chrome, Microsoft Edge, etc.
+- **Firefox:** Mozilla Firefox.
+- **WebKit:** Safari, iOS browsers.
+
+To test in Safari (WebKit):
+```ruby
+E2E.configure { |config| config.browser_type = :webkit }
+```
+
+Don't forget to install all browser binaries:
+```bash
+npx playwright install
+```
+
+### Switching Browsers per Test (RSpec)
+You can run specific tests in different browsers using metadata (requires simple setup in your helper).
+
+First, update your `spec/e2e_helper.rb` to respect metadata:
+
+```ruby
+RSpec.configure do |config|
+  config.before(:each) do |example|
+    browser = example.metadata[:browser]
+    if browser
+      E2E.config.browser_type = browser
+      E2E.reset_session! # Force new browser launch
+    end
+  end
+  
+  config.after(:each) do
+    if E2E.config.browser_type != :chromium
+      E2E.config.browser_type = :chromium
+      E2E.reset_session!
+    end
+  end
+end
+```
+
+Then use it in your specs:
+
+```ruby
+it "works in Safari", browser: :webkit do
+  visit "/"
+  expect(page.body).to include("Safari specific feature")
 end
 ```
 

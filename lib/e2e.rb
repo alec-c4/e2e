@@ -17,6 +17,11 @@ module E2E
       @session ||= Session.new
     end
 
+    def reset_session!
+      @session&.quit
+      @session = nil
+    end
+
     def configure
       yield(config)
     end
@@ -35,10 +40,11 @@ module E2E
   end
 
   class Config
-    attr_accessor :driver, :headless, :app
+    attr_accessor :driver, :headless, :app, :browser_type
 
     def initialize
       @driver = :playwright
+      @browser_type = :chromium
       @headless = ENV.fetch("HEADLESS", "true") == "true"
       @app = nil
     end

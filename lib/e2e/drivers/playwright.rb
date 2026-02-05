@@ -8,7 +8,10 @@ module E2E
       def initialize
         @playwright_execution = ::Playwright.create(playwright_cli_executable_path: "npx playwright")
         @playwright = @playwright_execution.playwright
-        @browser_type = @playwright.chromium
+
+        browser_type_name = E2E.config.browser_type || :chromium
+        @browser_type = @playwright.send(browser_type_name)
+
         @browser = @browser_type.launch(headless: E2E.config.headless)
         @context = @browser.new_context
 

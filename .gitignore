@@ -6,7 +6,9 @@
 /pkg/
 /spec/reports/
 /tmp/
-/log/
-*.log
-*.png
+
+# rspec failure tracking
 .rspec_status
+
+# Gem build artifacts
+*.gem
