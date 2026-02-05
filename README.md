@@ -173,6 +173,31 @@ all("li")             # Returns Array<E2E::Element>
 find("button", text: "Save") # Filter by text
 ```
 
+#### Assertions & Matchers
+
+```ruby
+# Check for content
+expect(page.body).to include("Success")
+expect(find(".alert")).to have_text("Success")
+expect(find(".alert")).to have_content("Success") # Alias
+
+# Check for classes
+expect(find(".alert")).to have_class("success")
+expect(find(".alert")).not_to have_class("error")
+
+# Check visibility
+expect(find("#modal")).to be_visible
+
+# Check attributes & value
+expect(find("input")).to have_value("test")
+expect(find("div")).to have_attribute("data-id", "123")
+
+# Check states
+expect(find("#checkbox")).to be_checked
+expect(find("button")).to be_disabled
+expect(find("input")).to be_enabled
+```
+
 #### Assertions & Data
 
 ```ruby

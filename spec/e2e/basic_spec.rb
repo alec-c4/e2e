@@ -8,7 +8,7 @@ RSpec.describe "Basic", type: :e2e do
     expect(page.body).to include("Example Domain")
 
     h1 = find("h1")
-    expect(h1.text).to eq("Example Domain")
+    expect(h1).to have_text("Example Domain")
 
     # JavaScript execution check
     title = evaluate("document.title")

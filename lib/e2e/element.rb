@@ -22,6 +22,34 @@ module E2E
       @locator.visible?
     end
 
+    def [](attribute)
+      @locator.get_attribute(attribute)
+    end
+
+    def classes
+      (self["class"] || "").split
+    end
+
+    def has_class?(class_name)
+      classes.include?(class_name.to_s)
+    end
+
+    def value
+      @locator.input_value
+    end
+
+    def checked?
+      @locator.checked?
+    end
+
+    def disabled?
+      @locator.disabled?
+    end
+
+    def enabled?
+      @locator.enabled?
+    end
+
     # Allows calling native playwright methods if needed
     def native
       @locator

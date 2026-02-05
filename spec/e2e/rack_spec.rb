@@ -21,6 +21,6 @@ RSpec.describe "Rack", type: :e2e do
   it "visits a local rack app" do
     visit("/")
     expect(page.body).to include("Hello Rack!")
-    expect(find("h1").text).to eq("Hello Rack!")
+    expect(find("h1")).to have_text("Hello Rack!")
   end
 end

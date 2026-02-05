@@ -6,6 +6,7 @@ require_relative "e2e/server"
 require_relative "e2e/session"
 require_relative "e2e/dsl"
 require_relative "e2e/element"
+require_relative "e2e/matchers"
 require_relative "e2e/rails"
 require_relative "e2e/drivers/playwright"
 
