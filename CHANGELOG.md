@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-02-07
+
+### Fixed
+
+- RuboCop configuration now correctly disables `Capybara/SpecificFinders` cop for E2E tests, preventing false positive suggestions to use `find_by_id` (which is not supported by this gem)
+
 ## [0.4.1] - 2026-02-07
 
 ### Added

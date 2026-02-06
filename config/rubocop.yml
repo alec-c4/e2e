@@ -29,3 +29,9 @@ RSpec/MultipleExpectations:
 
 RSpec/NestedGroups:
   Max: 4
+
+# 'find_by_id' is not supported in e2e, so we stick to 'find("#id")'
+Capybara/SpecificFinders:
+  Exclude:
+    - 'spec/e2e/**/*'
+    - 'test/e2e/**/*'

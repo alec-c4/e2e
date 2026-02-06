@@ -1,6 +1,9 @@
 pre-commit:
   parallel: true
   commands:
+    gemfile:
+      glob: "{Gemfile,e2e.gemspec,lib/e2e/version.rb}"
+      run: bundle install && git add Gemfile.lock
     appraisal:
       glob: "{Gemfile,e2e.gemspec,lib/e2e/version.rb}"
       run: bundle exec appraisal install && git add gemfiles/*.lock
