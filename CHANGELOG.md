@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-02-06
+
+### Added
+
+- **Auto-waiting matchers:** `have_text`, `have_content`, and `have_current_path` now automatically retry until the expected condition is met or the timeout expires, eliminating flaky tests caused by page transitions and async rendering
+- `have_current_path` matcher for asserting the current URL path with auto-waiting (supports exact strings and regexps)
+- `E2E.wait_until` helper method for custom waiting logic in tests
+- `wait_timeout` configuration option (default: 5 seconds) to control how long matchers wait before failing
+- `text` method on page/session for reading visible text content of the page body
+
+### Changed
+
+- `fill_in` now matches fields by label, placeholder, id, and name (Capybara-like behavior) instead of only CSS selectors, with fallback to direct CSS selector
+
 ## [0.3.2] - 2026-02-05
 
 ### Fixed

@@ -8,7 +8,7 @@ module E2E
 
     attr_reader :driver
 
-    def_delegators :@driver, :current_url, :click, :click_button, :click_link, :fill_in, :check, :uncheck, :attach_file, :body, :evaluate, :save_screenshot, :native, :pause, :reset!, :quit
+    def_delegators :@driver, :current_url, :click, :click_button, :click_link, :fill_in, :check, :uncheck, :attach_file, :body, :text, :evaluate, :save_screenshot, :native, :pause, :reset!, :quit
 
     def initialize(driver_name = E2E.config.driver)
       @driver = initialize_driver(driver_name)

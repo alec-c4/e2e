@@ -59,7 +59,21 @@ module E2E
       end
 
       def fill_in(selector, with:)
-        @page.fill(selector, with)
+        # Try to match Capybara's behavior: Label, Placeholder, ID, Name
+        chain = @page.get_by_label(selector).or(@page.get_by_placeholder(selector))
+
+        # Only add ID/Name matching if the selector doesn't contain spaces (valid CSS ID/Name assumption-ish)
+        if selector.match?(/^[a-zA-Z0-9_-]+$/)
+          chain = chain.or(@page.locator("##{selector}"))
+            .or(@page.locator("[name='#{selector}']"))
+        end
+
+        begin
+          chain.first.fill(with)
+        rescue
+          # Fallback to treating it as a direct CSS selector if the above failed
+          @page.fill(selector, with)
+        end
       end
 
       def check(selector)
@@ -76,6 +90,11 @@ module E2E
 
       def body
         @page.content
+      end
+
+      # Required for have_content matcher on page object
+      def text
+        @page.inner_text("body")
       end
 
       def evaluate(script)

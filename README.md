@@ -85,7 +85,8 @@ RSpec.describe "User Login", type: :e2e do
     fill_in "Password", with: "password"
     click_button "Sign In"
 
-    expect(page.body).to include("Welcome, User!")
+    expect(page).to have_current_path("/dashboard")
+    expect(page).to have_content("Welcome, User!")
   end
 end
 ```
@@ -159,7 +160,8 @@ click_button "Submit"
 click_link "Read more"
 click "#nav-menu" # CSS selector
 
-fill_in "Email", with: "test@example.com"
+fill_in "Email", with: "test@example.com"  # Matches by label, placeholder, id, or name
+fill_in "#email", with: "test@example.com" # CSS selector fallback
 check "I agree"
 uncheck "Subscribe"
 attach_file "#upload", "path/to/file.png"
@@ -175,11 +177,18 @@ find("button", text: "Save") # Filter by text
 
 #### Assertions & Matchers
 
+All text and path matchers **automatically wait** for the expected condition to be met (up to `wait_timeout` seconds), making your tests resilient to page transitions and async rendering.
+
 ```ruby
-# Check for content
-expect(page.body).to include("Success")
-expect(find(".alert")).to have_text("Success")
-expect(find(".alert")).to have_content("Success") # Alias
+# Check for content (auto-waiting)
+expect(page).to have_text("Success")
+expect(page).to have_content("Success")         # Alias for have_text
+expect(find(".alert")).to have_text("Success")   # Works on elements too
+expect(page).to have_text(/welcome/i)            # Regexp support
+
+# Check current path (auto-waiting)
+expect(page).to have_current_path("/dashboard")
+expect(page).to have_current_path(/\/users\/\d+/) # Regexp support
 
 # Check for classes
 expect(find(".alert")).to have_class("success")
@@ -204,6 +213,26 @@ expect(find("input")).to be_enabled
 page.body             # Full HTML
 evaluate("document.title") # Execute JS
 save_screenshot("tmp/screen.png")
+```
+
+### Auto-Waiting
+
+The `have_text`, `have_content`, and `have_current_path` matchers automatically retry until the condition is met or the configured `wait_timeout` expires (default: 5 seconds). This eliminates flaky tests caused by page navigations, redirects, and async rendering.
+
+```ruby
+click_button "Submit"
+# No need for sleep or manual waiting — the matcher will poll until
+# the page transitions and the expected content appears
+expect(page).to have_current_path("/success")
+expect(page).to have_content("Your order has been placed")
+```
+
+For custom waiting logic, use `E2E.wait_until`:
+
+```ruby
+E2E.wait_until(timeout: 10) do
+  page.current_url.include?("/ready")
+end
 ```
 
 ### 🔓 Native Access (The Escape Hatch)
@@ -265,6 +294,7 @@ E2E.configure do |config|
   config.browser_type = :chromium # Options: :chromium (default), :firefox, :webkit
   config.headless = ENV.fetch("HEADLESS", "true") == "true"
   config.app = Rails.application # Automatic Rack booting
+  config.wait_timeout = 5 # Seconds to wait in auto-waiting matchers (default: 5)
 end
 ```
 
