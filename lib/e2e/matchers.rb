@@ -51,12 +51,54 @@ if defined?(RSpec::Matchers)
 
   RSpec::Matchers.alias_matcher :have_content, :have_text
 
+  RSpec::Matchers.define :have_no_text do |expected_text|
+    match do |actual|
+      @actual_text = nil
+
+      E2E.wait_until do
+        @actual_text = actual.text
+        if expected_text.is_a?(Regexp)
+          !@actual_text.match?(expected_text)
+        else
+          !@actual_text.include?(expected_text)
+        end
+      end
+    end
+
+    match_when_negated do |actual|
+      E2E.wait_until do
+        @actual_text = actual.text
+        if expected_text.is_a?(Regexp)
+          @actual_text.match?(expected_text)
+        else
+          @actual_text.include?(expected_text)
+        end
+      end
+    end
+
+    failure_message do
+      "expected not to find text #{expected_text.inspect} in #{@actual_text.inspect}"
+    end
+
+    failure_message_when_negated do
+      "expected to find text #{expected_text.inspect} in #{@actual_text.inspect}"
+    end
+  end
+
+  RSpec::Matchers.alias_matcher :have_no_content, :have_no_text
+
   RSpec::Matchers.define :have_current_path do |expected_path|
     match do |session|
       @actual_path = nil
 
       E2E.wait_until do
-        @actual_path = URI.parse(session.current_url).path
+        url = session.current_url
+        @actual_path = begin
+          URI.parse(url).path
+        rescue URI::InvalidURIError
+          url
+        end
+
         if expected_path.is_a?(Regexp)
           @actual_path.match?(expected_path)
         else
@@ -67,7 +109,13 @@ if defined?(RSpec::Matchers)
 
     match_when_negated do |session|
       E2E.wait_until do
-        @actual_path = URI.parse(session.current_url).path
+        url = session.current_url
+        @actual_path = begin
+          URI.parse(url).path
+        rescue URI::InvalidURIError
+          url
+        end
+
         if expected_path.is_a?(Regexp)
           !@actual_path.match?(expected_path)
         else
@@ -82,6 +130,52 @@ if defined?(RSpec::Matchers)
 
     failure_message_when_negated do
       "expected current path not to be #{expected_path.inspect}, but it was"
+    end
+  end
+
+  RSpec::Matchers.define :have_no_current_path do |expected_path|
+    match do |session|
+      @actual_path = nil
+
+      E2E.wait_until do
+        url = session.current_url
+        @actual_path = begin
+          URI.parse(url).path
+        rescue URI::InvalidURIError
+          url
+        end
+
+        if expected_path.is_a?(Regexp)
+          !@actual_path.match?(expected_path)
+        else
+          @actual_path != expected_path
+        end
+      end
+    end
+
+    match_when_negated do |session|
+      E2E.wait_until do
+        url = session.current_url
+        @actual_path = begin
+          URI.parse(url).path
+        rescue URI::InvalidURIError
+          url
+        end
+
+        if expected_path.is_a?(Regexp)
+          @actual_path.match?(expected_path)
+        else
+          @actual_path == expected_path
+        end
+      end
+    end
+
+    failure_message do
+      "expected current path not to be #{expected_path.inspect}, but was #{@actual_path.inspect}"
+    end
+
+    failure_message_when_negated do
+      "expected current path to be #{expected_path.inspect}, but it was"
     end
   end
 

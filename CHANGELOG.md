@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-02-07
+
+### Added
+
+- `have_no_content` / `have_no_text` matchers with auto-waiting support
+- `have_no_current_path` matcher with auto-waiting support
+
+### Fixed
+
+- `have_current_path` (and its negation) no longer crashes on invalid URIs (e.g., `data:` URLs)
+
 ## [0.4.0] - 2026-02-06
 
 ### Added

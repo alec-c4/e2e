@@ -57,4 +57,30 @@ RSpec.describe "Matchers", type: :e2e do
     expect(visible).to be_visible
     expect(hidden).not_to be_visible
   end
+
+  it "supports have_no_text/have_no_content matcher" do
+    visit "data:text/html,<div>Hello World</div>"
+    expect(page).to have_no_text("Goodbye")
+    expect(page).to have_no_content("Goodbye")
+
+    expect {
+      expect(page).to have_no_content("Hello")
+    }.to raise_error(RSpec::Expectations::ExpectationNotMetError)
+  end
+
+  it "supports have_no_current_path matcher" do
+    visit "data:text/html,<div></div>"
+    expect(page).to have_no_current_path("/foo")
+
+    url = page.current_url
+    path = begin
+      URI.parse(url).path
+    rescue URI::InvalidURIError
+      url
+    end
+
+    expect {
+      expect(page).to have_no_current_path(path)
+    }.to raise_error(RSpec::Expectations::ExpectationNotMetError)
+  end
 end
