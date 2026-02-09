@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-02-09
+
+### Added
+
+- Minitest integration now includes auto-waiting assertions: `assert_text`, `refute_text`, `assert_selector`, `refute_selector`, `assert_current_path`, `refute_current_path`
+- `E2E::Minitest::TestCase` now automatically quits the browser session after the test suite finishes
+
 ## [0.4.2] - 2026-02-07
 
 ### Fixed

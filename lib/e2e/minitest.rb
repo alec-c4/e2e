@@ -2,11 +2,13 @@
 
 require "minitest"
 require "e2e"
+require_relative "assertions"
 
 module E2E
   module Minitest
     class TestCase < ::Minitest::Test
       include E2E::DSL
+      include E2E::Assertions
 
       def teardown
         take_failed_screenshot if !passed? && !skipped?
@@ -22,16 +24,24 @@ module E2E
         screenshots_dir = File.expand_path("tmp/screenshots", Dir.pwd)
         FileUtils.mkdir_p(screenshots_dir)
 
-        name = "#{self.class.name}_#{name}".gsub(/[^0-9A-Za-z]/, "_")
+        name = "#{self.class.name}_#{self.name}".gsub(/[^0-9A-Za-z]/, "_")
         path = File.join(screenshots_dir, "#{name}.png")
 
         begin
-          save_screenshot(path) # rubocop:disable Lint/Debugger
-          puts "\n[E2E] Screenshot saved to #{path}"
+          # rubocop:disable Lint/Debugger
+          save_screenshot(path)
+          # rubocop:enable Lint/Debugger
+          puts "
+[E2E] Screenshot saved to #{path}"
         rescue => e
-          puts "\n[E2E] Failed to save screenshot: #{e.message}"
+          puts "
+[E2E] Failed to save screenshot: #{e.message}"
         end
       end
     end
   end
+end
+
+Minitest.after_run do
+  E2E.session.quit if E2E.instance_variable_get(:@session)
 end

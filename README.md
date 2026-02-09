@@ -107,7 +107,8 @@ class UserLoginTest < E2E::Minitest::TestCase
     fill_in "Password", with: "password"
     click_button "Sign In"
 
-    assert_includes page.body, "Welcome, User!"
+    assert_text "Welcome, User!"
+    assert_current_path "/dashboard"
   end
 end
 ```
@@ -122,6 +123,8 @@ Set the `HEADLESS` environment variable to `false`:
 
 ```bash
 HEADLESS=false bundle exec rspec spec/e2e
+# or for minitest
+HEADLESS=false ruby test/e2e/login_test.rb
 ```
 
 ### Pausing for Debugging
@@ -142,7 +145,7 @@ Alternatively, you can just use `sleep(10)` if you want the browser to stay open
 
 ### Automatic Screenshots
 
-If a test fails in RSpec, a screenshot is automatically saved to `tmp/screenshots/` for quick investigation.
+If a test fails, a screenshot is automatically saved to `tmp/screenshots/` for quick investigation.
 
 ### API Reference
 
@@ -175,7 +178,7 @@ all("li")             # Returns Array<E2E::Element>
 find("button", text: "Save") # Filter by text
 ```
 
-#### Assertions & Matchers
+#### RSpec Matchers
 
 All text and path matchers **automatically wait** for the expected condition to be met (up to `wait_timeout` seconds), making your tests resilient to page transitions and async rendering.
 
@@ -205,6 +208,26 @@ expect(find("div")).to have_attribute("data-id", "123")
 expect(find("#checkbox")).to be_checked
 expect(find("button")).to be_disabled
 expect(find("input")).to be_enabled
+```
+
+#### Minitest Assertions
+
+These assertions mimic the behavior of RSpec matchers, including **auto-waiting**.
+
+```ruby
+# Check for content (auto-waiting)
+assert_text "Welcome"
+refute_text "Error"
+assert_text /welcome/i
+
+# Check for specific elements (auto-waiting)
+assert_selector ".user-profile"
+refute_selector "#loading-spinner"
+
+# Check current path (auto-waiting)
+assert_current_path "/dashboard"
+assert_current_path /\/users\/\d+/
+refute_current_path "/login"
 ```
 
 #### Assertions & Data
