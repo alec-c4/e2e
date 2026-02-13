@@ -258,6 +258,22 @@ E2E.wait_until(timeout: 10) do
 end
 ```
 
+Or use built-in DSL helpers that raise clear errors on timeout:
+
+```ruby
+wait_for { SomeModel.count > 0 }
+wait_for_text("Saved")
+wait_for_current_path("/dashboard")
+wait_for_flash("Profile updated", type: :notice)
+
+click_button_and_wait_for_text("Save", "Saved")
+click_link_and_wait_for_text("Next", /done/i)
+click_button_and_wait_for_path("Submit", "/dashboard")
+click_link_and_wait_for_path("Continue", /checkout/)
+click_button_and_wait_for_flash("Save", "Updated", type: :notice)
+click_link_and_wait_for_flash("Delete", /failed/i, type: :alert)
+```
+
 ### 🔓 Native Access (The Escape Hatch)
 
 We believe you shouldn't be limited by the wrapper. You can access the underlying `Playwright::Page` object at any time using `.native`.
@@ -318,6 +334,11 @@ E2E.configure do |config|
   config.headless = ENV.fetch("HEADLESS", "true") == "true"
   config.app = Rails.application # Automatic Rack booting
   config.wait_timeout = 5 # Seconds to wait in auto-waiting matchers (default: 5)
+  config.flash_selectors = {
+    any: "[role='alert'], [role='status'], .flash",
+    notice: "[role='status'], .flash.notice",
+    alert: "[role='alert'], .flash.alert"
+  }
 end
 ```
 

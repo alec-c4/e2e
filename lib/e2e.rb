@@ -55,7 +55,13 @@ module E2E
   end
 
   class Config
-    attr_accessor :driver, :headless, :app, :browser_type, :wait_timeout
+    DEFAULT_FLASH_SELECTORS = {
+      any: "[role='alert'], [role='status'], [data-flash], [data-testid*='flash'], .flash, .notice, .alert, .toast",
+      notice: "[role='status'], [data-flash-type='notice'], [data-flash='notice'], .flash.notice, .flash-success, .notice",
+      alert: "[role='alert'], [data-flash-type='alert'], [data-flash='alert'], .flash.alert, .flash-error, .alert"
+    }.freeze
+
+    attr_accessor :driver, :headless, :app, :browser_type, :wait_timeout, :flash_selectors
 
     def initialize
       @driver = :playwright
@@ -63,6 +69,7 @@ module E2E
       @headless = ENV.fetch("HEADLESS", "true") == "true"
       @app = nil
       @wait_timeout = 5
+      @flash_selectors = DEFAULT_FLASH_SELECTORS.dup
     end
   end
 end

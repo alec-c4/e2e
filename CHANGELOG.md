@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-02-13
+
+### Added
+
+- DSL wait helpers: `wait_for`, `wait_for_text`, `wait_for_current_path`, and `wait_for_flash`
+- Action helpers with built-in waiting: `click_button_and_wait_for_text`, `click_link_and_wait_for_text`, `click_button_and_wait_for_path`, `click_link_and_wait_for_path`, `click_button_and_wait_for_flash`, `click_link_and_wait_for_flash`
+- Configurable flash selectors via `E2E.config.flash_selectors`
+
 ## [0.5.0] - 2026-02-09
 
 ### Added
