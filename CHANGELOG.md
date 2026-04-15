@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-04-15
+
+### Removed
+
+- `Capybara/SpecificFinders` RuboCop rule removed from `config/rubocop.yml` — the gem has no Capybara dependency
+
 ## [0.6.0] - 2026-02-13
 
 ### Added
