@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "A flexible E2E testing library allowing pluggable drivers (starting with Playwright) with a clean, unified API."
   spec.homepage = "https://github.com/alec-c4/e2e"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.2.0"
+  spec.required_ruby_version = ">= 3.3.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/alec-c4/e2e"
