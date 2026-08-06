@@ -44,4 +44,5 @@ end
 
 Minitest.after_run do
   E2E.session.quit if E2E.instance_variable_get(:@session)
+  E2E.stop_server!
 end

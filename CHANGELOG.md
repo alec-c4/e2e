@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-08-05
+
+### Fixed
+
+- Shared ActiveRecord connection now also overrides `lease_connection` and `with_connection` (Rails 7.2+/8), preventing intermittent deadlocks where the example thread held the only pool connection during Playwright navigation while the WEBrick thread sat `idle in transaction`
+- `E2E::Rails.enable_shared_connection!` no longer crashes on Rails 7.0/7.1, where `lease_connection`/`with_connection` don't exist yet; it bootstraps and falls back through `connection` instead
+- Playwright `visit` defaults to `waitUntil: "domcontentloaded"` with a configurable navigation timeout so pages with third-party iframes (YouTube/Vimeo) no longer hang on full `load`
+- Blocking Playwright actions (`click`, `fill_in`, etc.) release the example thread's sticky AR lease while waiting for the browser when shared connection is enabled
+- WEBrick test server is shut down after the RSpec/Minitest suite finishes
+- `E2E::Server` resolves the WEBrick handler via `Rack::Handler` on Rack 2.x stacks (e.g. Rails 7.0/7.1, which pin `rack ~> 2.2`), where the `rackup` gem has no `Handler` module of its own
+
+### Added
+
+- `E2E.config.navigation_wait_until` (default: `"domcontentloaded"`)
+- `E2E.config.navigation_timeout` (default: `30` seconds)
+- `E2E.stop_server!`
+
 ## [0.7.0] - 2026-07-15
 
 ### Changed

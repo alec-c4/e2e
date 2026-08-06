@@ -11,5 +11,6 @@ gem "standard"
 gem "rubocop-rspec"
 gem "rubocop-performance"
 gem "rails", "~> 7.0.0"
+gem "sqlite3", "~> 1.4"
 
 gemspec path: "../"

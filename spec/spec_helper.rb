@@ -2,8 +2,8 @@
 
 require "simplecov"
 SimpleCov.start do
-  add_filter "/spec/"
-  add_filter "/bin/"
+  skip "/spec/"
+  skip "/bin/"
 end
 
 require "e2e"

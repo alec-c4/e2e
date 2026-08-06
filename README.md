@@ -334,6 +334,8 @@ E2E.configure do |config|
   config.headless = ENV.fetch("HEADLESS", "true") == "true"
   config.app = Rails.application # Automatic Rack booting
   config.wait_timeout = 5 # Seconds to wait in auto-waiting matchers (default: 5)
+  config.navigation_wait_until = "domcontentloaded" # Avoid hangs on third-party iframes
+  config.navigation_timeout = 30 # Seconds for page.goto
   config.flash_selectors = {
     any: "[role='alert'], [role='status'], .flash",
     notice: "[role='status'], .flash.notice",

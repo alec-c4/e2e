@@ -37,6 +37,11 @@ module E2E
         srv
       end
     end
+
+    def stop_server!
+      @server&.stop
+      @server = nil
+    end
   end
 
   # Retry a block until it returns truthy or timeout is reached
@@ -61,7 +66,8 @@ module E2E
       alert: "[role='alert'], [data-flash-type='alert'], [data-flash='alert'], .flash.alert, .flash-error, .alert"
     }.freeze
 
-    attr_accessor :driver, :headless, :app, :browser_type, :wait_timeout, :flash_selectors
+    attr_accessor :driver, :headless, :app, :browser_type, :wait_timeout, :flash_selectors,
+      :navigation_timeout, :navigation_wait_until
 
     def initialize
       @driver = :playwright
@@ -69,6 +75,10 @@ module E2E
       @headless = ENV.fetch("HEADLESS", "true") == "true"
       @app = nil
       @wait_timeout = 5
+      # Full "load" waits for every subframe (YouTube/Vimeo/etc.) and can hang
+      # navigations indefinitely when those resources never settle.
+      @navigation_wait_until = "domcontentloaded"
+      @navigation_timeout = 30
       @flash_selectors = DEFAULT_FLASH_SELECTORS.dup
     end
   end

@@ -17,16 +17,24 @@ module E2E
 
     def start
       @thread = Thread.new do
-        # Use Rackup handler for Rack 3 compatibility
-        Rackup::Handler::WEBrick.run(
+        webrick_handler.run(
           @app,
           Host: @host,
           Port: @port,
           AccessLog: [],
           Logger: WEBrick::Log.new(nil, 0) # Silence logs
-        )
+        ) do |server|
+          @webrick = server
+        end
       end
       wait_for_boot
+    end
+
+    def stop
+      @webrick&.shutdown
+      @thread&.join(5)
+      @thread = nil
+      @webrick = nil
     end
 
     def base_url
@@ -34,6 +42,18 @@ module E2E
     end
 
     private
+
+    # rackup 2.x (the version paired with Rack 3) exposes Rackup::Handler.
+    # Older stacks that pin Rack 2.x (e.g. Rails 7.0/7.1 via this gem's own
+    # Appraisal matrix) resolve `rackup` down to its 1.x line, which has no
+    # Handler module at all -- there, the handler lives on Rack::Handler.
+    def webrick_handler
+      if defined?(Rackup::Handler)
+        Rackup::Handler.get(:webrick)
+      else
+        Rack::Handler.get(:webrick)
+      end
+    end
 
     def find_available_port
       server = TCPServer.new("127.0.0.1", 0)
@@ -45,6 +65,11 @@ module E2E
     def wait_for_boot
       start_time = Time.now
       loop do
+        if @thread && !@thread.alive?
+          @thread.join # re-raises whatever exception killed the server thread
+          raise "Server thread exited before boot completed"
+        end
+
         socket = TCPSocket.new("127.0.0.1", @port)
         socket.close
         break

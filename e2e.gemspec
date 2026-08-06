@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rackup"
   spec.add_dependency "webrick"
 
+  spec.add_development_dependency "activerecord"
   spec.add_development_dependency "appraisal"
   spec.add_development_dependency "lefthook"
   spec.add_development_dependency "minitest"
@@ -44,5 +45,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop-performance"
   spec.add_development_dependency "rubocop-rspec"
   spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "standard"
 end

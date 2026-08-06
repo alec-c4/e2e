@@ -19,11 +19,17 @@ module E2E
         # Enable debug console to allow page.pause (requires GUI, so only in headed mode)
         @context.enable_debug_console! unless @headless
 
-        @page = @context.new_page
+        @page = build_page
       end
 
       def visit(url)
-        @page.goto(url)
+        with_released_connection do
+          @page.goto(
+            url,
+            waitUntil: E2E.config.navigation_wait_until,
+            timeout: navigation_timeout_ms
+          )
+        end
       end
 
       def current_url
@@ -47,15 +53,15 @@ module E2E
       end
 
       def click(selector)
-        @page.click(selector)
+        with_released_connection { @page.click(selector) }
       end
 
       def click_button(value, **options)
-        @page.get_by_role("button", name: value, **options).click
+        with_released_connection { @page.get_by_role("button", name: value, **options).click }
       end
 
       def click_link(value, **options)
-        @page.get_by_role("link", name: value, **options).click
+        with_released_connection { @page.get_by_role("link", name: value, **options).click }
       end
 
       def fill_in(selector, with:)
@@ -68,7 +74,7 @@ module E2E
             .or(@page.locator("[name='#{selector}']"))
         end
 
-        begin
+        with_released_connection do
           chain.first.fill(with)
         rescue
           # Fallback to treating it as a direct CSS selector if the above failed
@@ -77,15 +83,15 @@ module E2E
       end
 
       def check(selector)
-        @page.check(selector)
+        with_released_connection { @page.check(selector) }
       end
 
       def uncheck(selector)
-        @page.uncheck(selector)
+        with_released_connection { @page.uncheck(selector) }
       end
 
       def attach_file(selector, path)
-        @page.set_input_files(selector, path)
+        with_released_connection { @page.set_input_files(selector, path) }
       end
 
       def body
@@ -118,12 +124,30 @@ module E2E
       def reset!
         @context.close
         @context = @browser.new_context
-        @page = @context.new_page
+        @context.enable_debug_console! unless @headless
+        @page = build_page
       end
 
       def quit
         @browser.close
         @playwright_execution.stop
+      end
+
+      private
+
+      def build_page
+        page = @context.new_page
+        page.set_default_timeout((E2E.config.wait_timeout * 1000).to_i)
+        page.set_default_navigation_timeout(navigation_timeout_ms)
+        page
+      end
+
+      def navigation_timeout_ms
+        (E2E.config.navigation_timeout * 1000).to_i
+      end
+
+      def with_released_connection(&block)
+        E2E::Rails.with_released_connection(&block)
       end
     end
   end
