@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-08-13
+
+### Added
+
+- `E2E.config.ensure_vite_assets` (`:auto` by default) builds ViteRuby test assets once before the e2e suite (RSpec `before(:suite)`, Minitest `before_setup`). Modes: `:auto` (build when ViteRuby is loaded), `:build` (require ViteRuby), `:warn`, `:skip`. Serialized with a flock so only one process compiles; ViteRuby skips compile when the watched-files digest is unchanged. Escape hatch: `SKIP_VITE_TEST_BUILD=1`.
+- Install generator documents `ensure_vite_assets` in the helper template.
+
+### Fixed
+
+- Inertia / vite_rails apps no longer silently run e2e against a stale `public/vite-test` bundle when specs are started without a manual `bin/vite build --mode=test`.
+
 ## [0.7.1] - 2026-08-05
 
 ### Fixed

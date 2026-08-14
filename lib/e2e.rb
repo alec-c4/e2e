@@ -7,6 +7,7 @@ require_relative "e2e/session"
 require_relative "e2e/dsl"
 require_relative "e2e/element"
 require_relative "e2e/rails"
+require_relative "e2e/vite_assets"
 require_relative "e2e/drivers/playwright"
 
 module E2E
@@ -67,7 +68,7 @@ module E2E
     }.freeze
 
     attr_accessor :driver, :headless, :app, :browser_type, :wait_timeout, :flash_selectors,
-      :navigation_timeout, :navigation_wait_until
+      :navigation_timeout, :navigation_wait_until, :ensure_vite_assets
 
     def initialize
       @driver = :playwright
@@ -80,6 +81,8 @@ module E2E
       @navigation_wait_until = "domcontentloaded"
       @navigation_timeout = 30
       @flash_selectors = DEFAULT_FLASH_SELECTORS.dup
+      # :auto builds when ViteRuby is loaded; :build requires it; :warn / :skip
+      @ensure_vite_assets = :auto
     end
   end
 end

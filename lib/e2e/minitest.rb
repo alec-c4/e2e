@@ -10,6 +10,11 @@ module E2E
       include E2E::DSL
       include E2E::Assertions
 
+      def before_setup
+        E2E::ViteAssets.ensure_built!
+        super
+      end
+
       def teardown
         take_failed_screenshot if !passed? && !skipped?
 

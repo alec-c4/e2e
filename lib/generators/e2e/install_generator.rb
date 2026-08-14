@@ -68,6 +68,9 @@ module E2e
           E2E.configure do |config|
             config.app = Rails.application
             config.headless = ENV.fetch("HEADLESS", "true") == "true"
+            # :auto builds Vite test assets when ViteRuby is loaded (Inertia/Vite apps).
+            # Options: :auto, :build, :warn, :skip — or SKIP_VITE_TEST_BUILD=1
+            config.ensure_vite_assets = :auto
           end
 
           # If you want to use transactional tests (faster), enable shared connection:
@@ -89,6 +92,9 @@ module E2e
           E2E.configure do |config|
             config.app = Rails.application
             config.headless = ENV.fetch("HEADLESS", "true") == "true"
+            # :auto builds Vite test assets when ViteRuby is loaded (Inertia/Vite apps).
+            # Options: :auto, :build, :warn, :skip — or SKIP_VITE_TEST_BUILD=1
+            config.ensure_vite_assets = :auto
           end
 
           # If you want to use transactional tests (faster), enable shared connection:

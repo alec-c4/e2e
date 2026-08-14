@@ -10,6 +10,10 @@ require_relative "matchers"
 RSpec.configure do |config|
   config.include E2E::DSL, type: :e2e
 
+  config.before(:suite) do
+    E2E::ViteAssets.ensure_built!
+  end
+
   config.after(:each, type: :e2e) do |example|
     if example.exception
       # Create tmp/screenshots directory if it doesn't exist

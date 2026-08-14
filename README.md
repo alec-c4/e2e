@@ -336,12 +336,27 @@ E2E.configure do |config|
   config.wait_timeout = 5 # Seconds to wait in auto-waiting matchers (default: 5)
   config.navigation_wait_until = "domcontentloaded" # Avoid hangs on third-party iframes
   config.navigation_timeout = 30 # Seconds for page.goto
+  # Vite / Inertia: ensure public/vite-test is fresh before the suite
+  # :auto (default) | :build | :warn | :skip — or SKIP_VITE_TEST_BUILD=1
+  config.ensure_vite_assets = :auto
   config.flash_selectors = {
     any: "[role='alert'], [role='status'], .flash",
     notice: "[role='status'], .flash.notice",
     alert: "[role='alert'], .flash.alert"
   }
 end
+```
+
+### Vite / Inertia assets
+
+Apps using `vite_rails` with `config/vite.json` `test.autoBuild: false` serve prebuilt files from `public/vite-test`. If that bundle is older than your frontend, e2e fails with missing buttons/pages instead of a clear asset error.
+
+With `ensure_vite_assets: :auto` (default), the gem calls `ViteRuby.commands.build` once before the suite. ViteRuby skips the real compile when nothing changed. A file lock keeps a single builder if several processes start together.
+
+```bash
+# Prefer either of these when building manually / in CI:
+bin/vite build --mode=test
+RAILS_ENV=test bin/vite build
 ```
 
 ### Multiple Browsers
