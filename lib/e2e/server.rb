@@ -16,6 +16,7 @@ module E2E
     end
 
     def start
+      eager_load_app!
       @thread = Thread.new do
         webrick_handler.run(
           @app,
@@ -42,6 +43,31 @@ module E2E
     end
 
     private
+
+    # Zeitwerk's per-loader autoload monitor and Ruby's own internal `require`
+    # lock can deadlock each other (classic lock-ordering inversion) when two
+    # threads race to autoload the same not-yet-loaded app constant for the
+    # first time. That race is exactly what this gem sets up by design: the
+    # WEBrick thread servicing the very first request and the caller's thread
+    # (evaluating spec/support files, factories, etc.) can each reference a
+    # fresh app class at the same moment, one thread ends up mid-`require`
+    # holding Ruby's require lock while waiting on Zeitwerk's monitor, the
+    # other holds that monitor while waiting on the require lock -- neither
+    # ever proceeds, and the process idles at ~0% CPU forever.
+    #
+    # Eager loading synchronously on the caller's thread, before the server
+    # thread ever starts, guarantees no constant is loaded for the first time
+    # under concurrency, so the race can't occur. This mirrors what already
+    # happens for free in CI-style setups that force `config.eager_load = true`
+    # in the test environment -- local runs that leave eager loading off are
+    # exactly where this hang has been observed.
+    def eager_load_app!
+      return unless E2E.config.eager_load_app
+      return unless defined?(::Rails) && ::Rails.respond_to?(:application) && ::Rails.application
+      return if ::Rails.application.config.eager_load
+
+      ::Rails.application.eager_load!
+    end
 
     # rackup 2.x (the version paired with Rack 3) exposes Rackup::Handler.
     # Older stacks that pin Rack 2.x (e.g. Rails 7.0/7.1 via this gem's own

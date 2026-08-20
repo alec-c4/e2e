@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-08-20
+
+### Fixed
+
+- `E2E::Server` eager loads a Rails app (once, before the in-process WEBrick thread starts) to close a rare full-process deadlock: Zeitwerk's per-loader autoload monitor and Ruby's own internal `require` lock can deadlock each other (a classic lock-ordering inversion) when the server thread and the caller's thread each reference a not-yet-loaded app constant for the first time at the same moment. The process idles at ~0% CPU forever with no exception raised. Only reproduces when `config.eager_load` is off (the common local-dev/test setting; CI setups that force eager loading were never affected). Opt out with `config.eager_load_app = false`.
+
 ## [0.7.2] - 2026-08-13
 
 ### Added

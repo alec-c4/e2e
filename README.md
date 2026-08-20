@@ -339,6 +339,11 @@ E2E.configure do |config|
   # Vite / Inertia: ensure public/vite-test is fresh before the suite
   # :auto (default) | :build | :warn | :skip — or SKIP_VITE_TEST_BUILD=1
   config.ensure_vite_assets = :auto
+  # Eager load a Rails app (once) before the in-process server thread starts.
+  # Prevents a rare deadlock where that thread and the caller's thread race to
+  # autoload the same app constant for the first time. Leave this on unless
+  # eager loading your app is itself broken. Default: true
+  config.eager_load_app = true
   config.flash_selectors = {
     any: "[role='alert'], [role='status'], .flash",
     notice: "[role='status'], .flash.notice",

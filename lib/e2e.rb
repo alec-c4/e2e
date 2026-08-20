@@ -68,7 +68,7 @@ module E2E
     }.freeze
 
     attr_accessor :driver, :headless, :app, :browser_type, :wait_timeout, :flash_selectors,
-      :navigation_timeout, :navigation_wait_until, :ensure_vite_assets
+      :navigation_timeout, :navigation_wait_until, :ensure_vite_assets, :eager_load_app
 
     def initialize
       @driver = :playwright
@@ -83,6 +83,9 @@ module E2E
       @flash_selectors = DEFAULT_FLASH_SELECTORS.dup
       # :auto builds when ViteRuby is loaded; :build requires it; :warn / :skip
       @ensure_vite_assets = :auto
+      # See Server#eager_load_app! for why this defaults on. Set to false only
+      # if eager loading the host app is itself broken or unacceptably slow.
+      @eager_load_app = true
     end
   end
 end
